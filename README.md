@@ -4,7 +4,7 @@ Session support for bareASGI (read the [docs](https://rob-blackbourn.github.io/b
 
 ## Usage
 
-You can add seesion middleware with the `add_session_middleware` helper function.
+You can add session middleware with the `add_session_middleware` helper function.
 
 ```python
 import socket

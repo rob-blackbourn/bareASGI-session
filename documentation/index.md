@@ -1,4 +1,4 @@
-# Session Sopport for bareASGI
+# Session Support for bareASGI
 
 This package provides session support for [bareASGI](https://github.com/rob-blackbourn/bareASGI).
 
