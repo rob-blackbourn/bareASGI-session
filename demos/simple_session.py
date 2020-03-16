@@ -2,6 +2,7 @@
 
 import asyncio
 from datetime import datetime
+import socket
 from typing import List
 
 from bareasgi import Application, text_writer, bytes_writer
@@ -44,14 +45,17 @@ async def session_handler(
 
 
 app = Application()
+
+fqdn = socket.getfqdn()
+host, _sep, domain_name = fqdn.partition(',')
 add_session_middleware(
     app,
     MemorySessionStorage(),
-    SessionCookieFactory(domain=b"ugsb-rbla01.bhdgsystematic.com")
+    SessionCookieFactory(domain=(domain_name or host).encode())
 )
 app.http_router.add({'GET'}, '/', index_handler)
 app.http_router.add({'GET'}, '/session', session_handler)
 
 config = Config()
-config.bind = ["ugsb-rbla01.bhdgsystematic.com:9009"]
+config.bind = [f"{fqdn}:9009"]
 asyncio.run(serve(app, config))
