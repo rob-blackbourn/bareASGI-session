@@ -1,6 +1,6 @@
 # bareASGI-session
 
-Session support for bareASGI
+Session support for bareASGI (read the [docs](https://rob-blackbourn.github.io/bareASGI-session/)).
 
 ## Usage
 
