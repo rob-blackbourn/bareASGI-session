@@ -1,8 +1,4 @@
-# bareASGI-session
-
-Session support for bareASGI
-
-## Usage
+# Getting Started
 
 You can add seesion middleware with the `add_session_middleware` helper function.
 

@@ -34,14 +34,15 @@ async def session_handler(
         _matches: RouteMatches,
         _content: Content
 ) -> HttpResponse:
-    print(info[SESSION_COOKIE_KEY])
-    info[SESSION_COOKIE_KEY]['now'] = datetime.now()
-    message = b'This is not a test'
+    session = info[SESSION_COOKIE_KEY]
+    now = session.get('now')
+    message = f'The time was {now}' if now else 'First time'
+    session['now'] = datetime.now()
     headers: List[Header] = [
         (b'content-type', b'text/plain'),
         (b'content-length', str(len(message)).encode('ascii'))
     ]
-    return 200, headers, bytes_writer(message)
+    return 200, headers, text_writer(message)
 
 
 app = Application()
