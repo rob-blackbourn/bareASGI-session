@@ -1,11 +1,11 @@
-site_name: bareASGI
-site_description: A lightweight ASGI web framework
+site_name: bareASGI-session
+site_description: Session support for bareASGI
 site_dir: docs
 
 docs_dir: documentation
 
-repo_name: rob-blackbourn/bareASGI
-repo_url: https://github.com/rob-blackbourn/bareASGI
+repo_name: rob-blackbourn/bareASGI-session
+repo_url: https://github.com/rob-blackbourn/bareASGI-session
 edit_uri: ""
 
 theme:
