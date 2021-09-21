@@ -1,0 +1,1311 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Session support for bareASGI">
+      
+      
+      
+      
+      <link rel="icon" href="../../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.8">
+    
+    
+      
+        <title>bareasgi_session - bareASGI-session</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.92558b1b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#module-bareasgi_session" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="bareASGI-session" class="md-header__button md-logo" aria-label="bareASGI-session" data-md-component="logo">
+      
+  <img src="../../images/peach.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            bareASGI-session
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              bareasgi_session
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/rob-blackbourn/bareASGI-session" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rob-blackbourn/bareASGI-session
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="bareASGI-session" class="md-nav__button md-logo" aria-label="bareASGI-session" data-md-component="logo">
+      
+  <img src="../../images/peach.svg" alt="logo">
+
+    </a>
+    bareASGI-session
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/rob-blackbourn/bareASGI-session" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rob-blackbourn/bareASGI-session
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Session Support for bareASGI
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      <label class="md-nav__link" for="__nav_2">
+        User Guide
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          User Guide
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/installation/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/getting-started/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3">
+        API
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="API" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          API
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          bareasgi_session
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        bareasgi_session
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-bareasgi_session" class="md-nav__link">
+    module bareasgi_session
+  </a>
+  
+    <nav class="md-nav" aria-label="module bareasgi_session">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-bareasgi_sessionadd_session_middleware" class="md-nav__link">
+    function bareasgi_session.add_session_middleware
+  </a>
+  
+    <nav class="md-nav" aria-label="function bareasgi_session.add_session_middleware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_1" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-memorysessionstoragesessionstorage" class="md-nav__link">
+    class MemorySessionStorage(SessionStorage)
+  </a>
+  
+    <nav class="md-nav" aria-label="class MemorySessionStorage(SessionStorage)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_2" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-method-memorysessionstorageload" class="md-nav__link">
+    async method MemorySessionStorage.load
+  </a>
+  
+    <nav class="md-nav" aria-label="async method MemorySessionStorage.load">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_3" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-method-memorysessionstoragesave" class="md-nav__link">
+    async method MemorySessionStorage.save
+  </a>
+  
+    <nav class="md-nav" aria-label="async method MemorySessionStorage.save">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_4" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-sessioncookiefactory" class="md-nav__link">
+    class SessionCookieFactory
+  </a>
+  
+    <nav class="md-nav" aria-label="class SessionCookieFactory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_5" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method-sessioncookiefactorycreate_cookie" class="md-nav__link">
+    method SessionCookieFactory.create_cookie
+  </a>
+  
+    <nav class="md-nav" aria-label="method SessionCookieFactory.create_cookie">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_6" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-sessionstorage" class="md-nav__link">
+    class SessionStorage
+  </a>
+  
+    <nav class="md-nav" aria-label="class SessionStorage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_7" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-method-sessionstorageload" class="md-nav__link">
+    async method SessionStorage.load
+  </a>
+  
+    <nav class="md-nav" aria-label="async method SessionStorage.load">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_8" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-method-sessionstoragesave" class="md-nav__link">
+    async method SessionStorage.save
+  </a>
+  
+    <nav class="md-nav" aria-label="async method SessionStorage.save">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_9" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-bareasgi_session" class="md-nav__link">
+    module bareasgi_session
+  </a>
+  
+    <nav class="md-nav" aria-label="module bareasgi_session">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-bareasgi_sessionadd_session_middleware" class="md-nav__link">
+    function bareasgi_session.add_session_middleware
+  </a>
+  
+    <nav class="md-nav" aria-label="function bareasgi_session.add_session_middleware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_1" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-memorysessionstoragesessionstorage" class="md-nav__link">
+    class MemorySessionStorage(SessionStorage)
+  </a>
+  
+    <nav class="md-nav" aria-label="class MemorySessionStorage(SessionStorage)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_2" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-method-memorysessionstorageload" class="md-nav__link">
+    async method MemorySessionStorage.load
+  </a>
+  
+    <nav class="md-nav" aria-label="async method MemorySessionStorage.load">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_3" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-method-memorysessionstoragesave" class="md-nav__link">
+    async method MemorySessionStorage.save
+  </a>
+  
+    <nav class="md-nav" aria-label="async method MemorySessionStorage.save">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_4" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-sessioncookiefactory" class="md-nav__link">
+    class SessionCookieFactory
+  </a>
+  
+    <nav class="md-nav" aria-label="class SessionCookieFactory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_5" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method-sessioncookiefactorycreate_cookie" class="md-nav__link">
+    method SessionCookieFactory.create_cookie
+  </a>
+  
+    <nav class="md-nav" aria-label="method SessionCookieFactory.create_cookie">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_6" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-sessionstorage" class="md-nav__link">
+    class SessionStorage
+  </a>
+  
+    <nav class="md-nav" aria-label="class SessionStorage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_7" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-method-sessionstorageload" class="md-nav__link">
+    async method SessionStorage.load
+  </a>
+  
+    <nav class="md-nav" aria-label="async method SessionStorage.load">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_8" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-method-sessionstoragesave" class="md-nav__link">
+    async method SessionStorage.save
+  </a>
+  
+    <nav class="md-nav" aria-label="async method SessionStorage.save">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_9" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  <h1>bareasgi_session</h1>
+                
+                <p>
+<div class="autodoc-module">
+<h3 class="autodoc-title" id="module-bareasgi_session">
+      <span class="autodoc-title-type">module </span><span class="autodoc-title-name">bareasgi_session</span>
+  <a class="headerlink" href="#module-bareasgi_session" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h4>
+<p>bareasgi_session</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-examples">
+
+</div>
+<div class="autodoc-attributes">
+
+</div>
+<div class="autodoc-callable">
+<h3 class="autodoc-title" id="function-bareasgi_sessionadd_session_middleware">
+  <span class="autodoc-title-type">function </span><span class="autodoc-qualifier">bareasgi_session</span><span class="autodoc-punctuation">.</span><span class="autodoc-title-name">add_session_middleware</span>
+<a class="headerlink" href="#function-bareasgi_sessionadd_session_middleware" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary_1">Summary<a class="headerlink" href="#summary_1" title="Permanent link">&para;</a></h4>
+<p>Add the session middleware</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-signature"><span class="autodoc-qualifier">bareasgi_session</span><span class="autodoc-punctuation">.</span><var class="autodoc-varname">add_session_middleware</var><span class="autodoc-punctuation">(</span><br />
+<div class="autodoc-argument">
+        <var class="autodoc-varname">app</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Application</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">storage</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">SessionStorage</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">cookie_factory</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">SessionCookieFactory</span></div>
+<span class="autodoc-punctuation">)</span><span class="autodoc-punctuation"> -&gt; </span><span class="autodoc-vartype">Any</span></div>
+<br />
+<div class="autodoc-parameters">
+<h4 class="autodoc-title" id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
+<var class="autodoc-varname">app</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Application</span><p>The ASGI application</p>
+<var class="autodoc-varname">storage</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">SessionStorage</span><p>The session storage engine</p>
+<var class="autodoc-varname">cookie_factory</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">SessionCookieFactory</span><p>The session cookie factory</p>
+</div>
+<div class="autodoc-returns">
+<h4 class="autodoc-title" id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">&para;</a></h4>
+<span class="autodoc-vartype">Any</span><span class="autodoc-punctuation">: </span>
+
+</div>
+<div class="autodoc-raises">
+
+</div>
+<div class="autodoc-examples">
+
+</div>
+</div>
+<hr />
+<div class="autodoc-class">
+<h3 class="autodoc-title" id="class-memorysessionstoragesessionstorage">
+  <span class="autodoc-title-type">class </span><span class="autodoc-title-name">MemorySessionStorage</span><span class="autodoc-punctuation">(</span><span class="autodoc-type">SessionStorage</span><span class="autodoc-punctuation">)</span>
+<a class="headerlink" href="#class-memorysessionstoragesessionstorage" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary_2">Summary<a class="headerlink" href="#summary_2" title="Permanent link">&para;</a></h4>
+<p>Memory session storage</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-signature"><span class="autodoc-qualifier">bareasgi_session</span><span class="autodoc-punctuation">.</span><var class="autodoc-varname">MemorySessionStorage</var><span class="autodoc-punctuation">(</span><span class="autodoc-punctuation">)</span><span class="autodoc-punctuation"> -&gt; </span><span class="autodoc-vartype">None</span></div>
+<br />
+<div class="autodoc-attributes">
+
+</div>
+<div class="autodoc-properties">
+
+</div>
+<div class="autodoc-classmethods"></div>
+<div class="autodoc-methods">
+<div class="autodoc-callable">
+<h3 class="autodoc-title" id="async-method-memorysessionstorageload">
+  <span class="autodoc-title-type">async method </span><span class="autodoc-qualifier">MemorySessionStorage</span><span class="autodoc-punctuation">.</span><span class="autodoc-title-name">load</span>
+<a class="headerlink" href="#async-method-memorysessionstorageload" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary_3">Summary<a class="headerlink" href="#summary_3" title="Permanent link">&para;</a></h4>
+<p>Load session data</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-signature"><span class="autodoc-keyword">async</span><span> </span><span class="autodoc-qualifier">MemorySessionStorage</span><span class="autodoc-punctuation">.</span><var class="autodoc-varname">load</var><span class="autodoc-punctuation">(</span><br />
+<div class="autodoc-argument">
+        <var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span></div>
+<span class="autodoc-punctuation">)</span><span class="autodoc-punctuation"> -&gt; </span><span class="autodoc-vartype">dict</span></div>
+<br />
+<div class="autodoc-parameters">
+<h4 class="autodoc-title" id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h4>
+<var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span><p>The session key.</p>
+</div>
+<div class="autodoc-returns">
+<h4 class="autodoc-title" id="returns_1">Returns<a class="headerlink" href="#returns_1" title="Permanent link">&para;</a></h4>
+<span class="autodoc-vartype">dict</span><span class="autodoc-punctuation">: </span>
+<span class="autodoc-summary">The session data.</span>
+</div>
+<div class="autodoc-raises">
+
+</div>
+<div class="autodoc-examples">
+
+</div>
+</div>
+<div class="autodoc-callable">
+<h3 class="autodoc-title" id="async-method-memorysessionstoragesave">
+  <span class="autodoc-title-type">async method </span><span class="autodoc-qualifier">MemorySessionStorage</span><span class="autodoc-punctuation">.</span><span class="autodoc-title-name">save</span>
+<a class="headerlink" href="#async-method-memorysessionstoragesave" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary_4">Summary<a class="headerlink" href="#summary_4" title="Permanent link">&para;</a></h4>
+<p>Save session data</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-signature"><span class="autodoc-keyword">async</span><span> </span><span class="autodoc-qualifier">MemorySessionStorage</span><span class="autodoc-punctuation">.</span><var class="autodoc-varname">save</var><span class="autodoc-punctuation">(</span><br />
+<div class="autodoc-argument">
+        <var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">session</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">dict</span></div>
+<span class="autodoc-punctuation">)</span><span class="autodoc-punctuation"> -&gt; </span><span class="autodoc-vartype">Any</span></div>
+<br />
+<div class="autodoc-parameters">
+<h4 class="autodoc-title" id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h4>
+<var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span><p>The session key.</p>
+<var class="autodoc-varname">session</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">dict</span><p>The session data.</p>
+</div>
+<div class="autodoc-returns">
+<h4 class="autodoc-title" id="returns_2">Returns<a class="headerlink" href="#returns_2" title="Permanent link">&para;</a></h4>
+<span class="autodoc-vartype">Any</span><span class="autodoc-punctuation">: </span>
+
+</div>
+<div class="autodoc-raises">
+
+</div>
+<div class="autodoc-examples">
+
+</div>
+</div>
+</div>
+<div class="autodoc-examples">
+
+</div>
+</div>
+<hr />
+<div class="autodoc-class">
+<h3 class="autodoc-title" id="class-sessioncookiefactory">
+  <span class="autodoc-title-type">class </span><span class="autodoc-title-name">SessionCookieFactory</span>
+<a class="headerlink" href="#class-sessioncookiefactory" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary_5">Summary<a class="headerlink" href="#summary_5" title="Permanent link">&para;</a></h4>
+<p>A session cookie factory.</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-signature"><span class="autodoc-qualifier">bareasgi_session</span><span class="autodoc-punctuation">.</span><var class="autodoc-varname">SessionCookieFactory</var><span class="autodoc-punctuation">(</span><br />
+<div class="autodoc-argument">
+        <var class="autodoc-varname">name</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">[type]</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">expires</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[datetime]</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">max_age</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[Union[int, timedelta]]</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">path</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[bytes]</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">domain</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[bytes]</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">secure</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">bool</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">http_only</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">bool</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">same_site</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[bytes]</span></div>
+<span class="autodoc-punctuation">)</span><span class="autodoc-punctuation"> -&gt; </span><span class="autodoc-vartype">None</span></div>
+<br />
+<div class="autodoc-parameters">
+<h4 class="autodoc-title" id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h4>
+<var class="autodoc-varname">name</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">[type]</span><span class="autodoc-punctuation"> (optional)</span><p>The session cookie name. Defaults to
+SESSION_COOKIE_NAME.</p>
+<var class="autodoc-varname">expires</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[datetime]</span><span class="autodoc-punctuation"> (optional)</span><p>The session cookie expiry.
+Defaults to SESSION_COOKIE_EXPIRES.</p>
+<var class="autodoc-varname">max_age</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[Union[int, timedelta]]</span><span class="autodoc-punctuation"> (optional)</span><p>The maximum age
+of the session cookie. Defaults to SESSION_COOKIE_MAX_AGE.</p>
+<var class="autodoc-varname">path</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[bytes]</span><span class="autodoc-punctuation"> (optional)</span><p>The session cookie path. Defaults
+to SESSION_COOKIE_PATH.</p>
+<var class="autodoc-varname">domain</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[bytes]</span><span class="autodoc-punctuation"> (optional)</span><p>The session cookie domain.
+Defaults to SESSION_COOKIE_DOMAIN.</p>
+<var class="autodoc-varname">secure</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">bool</span><span class="autodoc-punctuation"> (optional)</span><p>Indicates whether the cookie should be sent
+over https only. Defaults to SESSION_COOKIE_SECURE.</p>
+<var class="autodoc-varname">http_only</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">bool</span><span class="autodoc-punctuation"> (optional)</span><p>Indicates whether the session cookie is
+available to JavaScript in the browser. Defaults to
+SESSION_COOKIE_HTTP_ONLY.</p>
+<var class="autodoc-varname">same_site</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">Optional[bytes]</span><span class="autodoc-punctuation"> (optional)</span><p>CORS directive. Defaults to
+SESSION_COOKIE_SAME_SITE.</p>
+</div>
+<div class="autodoc-attributes">
+
+</div>
+<div class="autodoc-properties">
+
+</div>
+<div class="autodoc-classmethods"></div>
+<div class="autodoc-methods">
+<div class="autodoc-callable">
+<h3 class="autodoc-title" id="method-sessioncookiefactorycreate_cookie">
+  <span class="autodoc-title-type">method </span><span class="autodoc-qualifier">SessionCookieFactory</span><span class="autodoc-punctuation">.</span><span class="autodoc-title-name">create_cookie</span>
+<a class="headerlink" href="#method-sessioncookiefactorycreate_cookie" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary_6">Summary<a class="headerlink" href="#summary_6" title="Permanent link">&para;</a></h4>
+<p>Creates the 'set-cookie' header value</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-signature"><span class="autodoc-qualifier">SessionCookieFactory</span><span class="autodoc-punctuation">.</span><var class="autodoc-varname">create_cookie</var><span class="autodoc-punctuation">(</span><br />
+<div class="autodoc-argument">
+        <var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span></div>
+<span class="autodoc-punctuation">)</span><span class="autodoc-punctuation"> -&gt; </span><span class="autodoc-vartype">bytes</span></div>
+<br />
+<div class="autodoc-parameters">
+<h4 class="autodoc-title" id="parameters_4">Parameters<a class="headerlink" href="#parameters_4" title="Permanent link">&para;</a></h4>
+<var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span><p>The session key</p>
+</div>
+<div class="autodoc-returns">
+<h4 class="autodoc-title" id="returns_3">Returns<a class="headerlink" href="#returns_3" title="Permanent link">&para;</a></h4>
+<span class="autodoc-vartype">bytes</span><span class="autodoc-punctuation">: </span>
+<span class="autodoc-summary">The set-cookie header value.</span>
+</div>
+<div class="autodoc-raises">
+
+</div>
+<div class="autodoc-examples">
+
+</div>
+</div>
+</div>
+<div class="autodoc-examples">
+
+</div>
+</div>
+<hr />
+<div class="autodoc-class">
+<h3 class="autodoc-title" id="class-sessionstorage">
+  <span class="autodoc-title-type">class </span><span class="autodoc-title-name">SessionStorage</span>
+<a class="headerlink" href="#class-sessionstorage" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary_7">Summary<a class="headerlink" href="#summary_7" title="Permanent link">&para;</a></h4>
+<p>Session Storage</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-signature"><span class="autodoc-qualifier">bareasgi_session</span><span class="autodoc-punctuation">.</span><var class="autodoc-varname">SessionStorage</var><span class="autodoc-punctuation">(</span><span class="autodoc-punctuation">)</span><span class="autodoc-punctuation"> -&gt; </span><span class="autodoc-vartype">None</span></div>
+<br />
+<div class="autodoc-attributes">
+
+</div>
+<div class="autodoc-properties">
+
+</div>
+<div class="autodoc-classmethods"></div>
+<div class="autodoc-methods">
+<div class="autodoc-callable">
+<h3 class="autodoc-title" id="async-method-sessionstorageload">
+  <span class="autodoc-title-type">async method </span><span class="autodoc-qualifier">SessionStorage</span><span class="autodoc-punctuation">.</span><span class="autodoc-title-name">load</span>
+<a class="headerlink" href="#async-method-sessionstorageload" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary_8">Summary<a class="headerlink" href="#summary_8" title="Permanent link">&para;</a></h4>
+<p>Load session data</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-signature"><span class="autodoc-keyword">async</span><span> </span><span class="autodoc-qualifier">SessionStorage</span><span class="autodoc-punctuation">.</span><var class="autodoc-varname">load</var><span class="autodoc-punctuation">(</span><br />
+<div class="autodoc-argument">
+        <var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span></div>
+<span class="autodoc-punctuation">)</span><span class="autodoc-punctuation"> -&gt; </span><span class="autodoc-vartype">dict</span></div>
+<br />
+<div class="autodoc-parameters">
+<h4 class="autodoc-title" id="parameters_5">Parameters<a class="headerlink" href="#parameters_5" title="Permanent link">&para;</a></h4>
+<var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span><p>The session key.</p>
+</div>
+<div class="autodoc-returns">
+<h4 class="autodoc-title" id="returns_4">Returns<a class="headerlink" href="#returns_4" title="Permanent link">&para;</a></h4>
+<span class="autodoc-vartype">dict</span><span class="autodoc-punctuation">: </span>
+<span class="autodoc-summary">The session data.</span>
+</div>
+<div class="autodoc-raises">
+
+</div>
+<div class="autodoc-examples">
+
+</div>
+</div>
+<div class="autodoc-callable">
+<h3 class="autodoc-title" id="async-method-sessionstoragesave">
+  <span class="autodoc-title-type">async method </span><span class="autodoc-qualifier">SessionStorage</span><span class="autodoc-punctuation">.</span><span class="autodoc-title-name">save</span>
+<a class="headerlink" href="#async-method-sessionstoragesave" title="Permanent link">&para;</a></h3>
+<h4 class="autodoc-title" id="summary_9">Summary<a class="headerlink" href="#summary_9" title="Permanent link">&para;</a></h4>
+<p>Save session data</p>
+<div class="autodoc-description">
+
+</div>
+<div class="autodoc-signature"><span class="autodoc-keyword">async</span><span> </span><span class="autodoc-qualifier">SessionStorage</span><span class="autodoc-punctuation">.</span><var class="autodoc-varname">save</var><span class="autodoc-punctuation">(</span><br />
+<div class="autodoc-argument">
+        <var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span><span class="autodoc-punctuation">,</span></div>
+<div class="autodoc-argument">
+        <var class="autodoc-varname">session</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">dict</span></div>
+<span class="autodoc-punctuation">)</span><span class="autodoc-punctuation"> -&gt; </span><span class="autodoc-vartype">Any</span></div>
+<br />
+<div class="autodoc-parameters">
+<h4 class="autodoc-title" id="parameters_6">Parameters<a class="headerlink" href="#parameters_6" title="Permanent link">&para;</a></h4>
+<var class="autodoc-varname">key</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">str</span><p>The session key.</p>
+<var class="autodoc-varname">session</var><span class="autodoc-punctuation">: </span><span class="autodoc-vartype">dict</span><p>The session data.</p>
+</div>
+<div class="autodoc-returns">
+<h4 class="autodoc-title" id="returns_5">Returns<a class="headerlink" href="#returns_5" title="Permanent link">&para;</a></h4>
+<span class="autodoc-vartype">Any</span><span class="autodoc-punctuation">: </span>
+
+</div>
+<div class="autodoc-raises">
+
+</div>
+<div class="autodoc-examples">
+
+</div>
+</div>
+</div>
+<div class="autodoc-examples">
+
+</div>
+</div>
+<hr />
+</div>
+</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../../user-guide/getting-started/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Getting Started" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Getting Started
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.94ec81fe.min.js", "version": {"provider": "mike", "default": "stable"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.48dfec6c.min.js"></script>
+      
+    
+  </body>
+</html>
