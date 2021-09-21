@@ -2,6 +2,10 @@
 
 Session support for bareASGI (read the [docs](https://rob-blackbourn.github.io/bareASGI-session/)).
 
+## Branch
+
+This is the v3 maintenance branch.
+
 ## Usage
 
 You can add session middleware with the `add_session_middleware` helper function.
