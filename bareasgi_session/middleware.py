@@ -2,17 +2,9 @@
 
 from uuid import uuid4 as uuid
 
-from bareasgi import Application
-from baretypes import (
-    Scope,
-    Info,
-    RouteMatches,
-    Content,
-    HttpRequestCallback,
-    HttpResponse
-)
+from bareasgi import Application, HttpRequest, HttpResponse, HttpRequestCallback
 from bareutils.cookies import decode_set_cookie
-import bareutils.header as header
+from bareutils import header
 
 from .factory import SessionCookieFactory
 from .storage import SessionStorage
@@ -35,30 +27,23 @@ def add_session_middleware(
     """
 
     async def _session_middleware(
-            scope: Scope,
-            info: Info,
-            matches: RouteMatches,
-            content: Content,
+            request: HttpRequest,
             handler: HttpRequestCallback
     ) -> HttpResponse:
         # Fetch or create the session cookie and add it to info
-        cookies = header.cookie(scope['headers'])
+        cookies = header.cookie(request.scope['headers'])
         cookie = cookies.get(cookie_factory.name)
         session_key: str = cookie[0].decode('ascii') if cookie else str(uuid())
-        info[SESSION_COOKIE_KEY] = await storage.load(session_key)
+        request.info[SESSION_COOKIE_KEY] = await storage.load(session_key)
 
         # Call the request handler.
-        status_code, headers, content, push_responses = await handler(
-            scope,
-            info,
-            matches,
-            content
-        )
+        response = await handler(request)
 
         # Save the cookie data
-        await storage.save(session_key, info[SESSION_COOKIE_KEY])
+        await storage.save(session_key, request.info[SESSION_COOKIE_KEY])
 
         # Put the set-cookie in the headers
+        headers = response.headers or []
         set_cookie = cookie_factory.create_cookie(session_key)
         set_cookie_header = (b'set-cookie', set_cookie)
         for index, (key, value) in enumerate(headers):
@@ -70,7 +55,11 @@ def add_session_middleware(
         else:
             headers.append(set_cookie_header)
 
-        # Return the response.
-        return status_code, headers, content, push_responses
+        return HttpResponse(
+            response.status,
+            headers,
+            response.body,
+            response.pushes
+        )
 
     app.middlewares.append(_session_middleware)
