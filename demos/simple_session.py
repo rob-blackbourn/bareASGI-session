@@ -11,9 +11,8 @@ from hypercorn.config import Config
 
 from bareasgi_session import (
     add_session_middleware,
-    SESSION_COOKIE_KEY,
-    MemorySessionStorage,
-    SessionCookieFactory
+    session_data,
+    MemorySessionStorage
 )
 
 
@@ -23,7 +22,7 @@ async def index_handler(_request: HttpRequest) -> HttpResponse:
 
 
 async def session_handler(request: HttpRequest) -> HttpResponse:
-    session = request.info[SESSION_COOKIE_KEY]
+    session = session_data(request)
     now = session.get('now')
     message = f'The time was {now}' if now else 'First time'
     session['now'] = datetime.now()
@@ -41,7 +40,7 @@ host, _sep, domain_name = fqdn.partition(',')
 add_session_middleware(
     app,
     MemorySessionStorage(),
-    SessionCookieFactory(domain=(domain_name or host).encode())
+    domain=(domain_name or host).encode()
 )
 app.http_router.add({'GET'}, '/', index_handler)
 app.http_router.add({'GET'}, '/session', session_handler)
