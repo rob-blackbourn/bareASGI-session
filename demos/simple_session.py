@@ -2,7 +2,6 @@
 
 import asyncio
 from datetime import datetime
-import socket
 from typing import List, Tuple
 
 from bareasgi import Application, text_writer, HttpRequest, HttpResponse
@@ -35,16 +34,13 @@ async def session_handler(request: HttpRequest) -> HttpResponse:
 
 app = Application()
 
-fqdn = socket.getfqdn()
-host, _sep, domain_name = fqdn.partition(',')
 add_session_middleware(
     app,
-    MemorySessionStorage(),
-    domain=(domain_name or host).encode()
+    MemorySessionStorage()
 )
 app.http_router.add({'GET'}, '/', index_handler)
 app.http_router.add({'GET'}, '/session', session_handler)
 
 config = Config()
-config.bind = [f"0.0.0.0:9009"]
+config.bind = ["0.0.0.0:9009"]
 asyncio.run(serve(app, config))  # type: ignore
