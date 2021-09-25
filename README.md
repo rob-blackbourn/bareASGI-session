@@ -18,7 +18,8 @@ app = Application()
 add_session_middleware(app, MemorySessionStorage())
 ```
 
-The session can be retrieved with the `session_data` helper function:
+The session can be retrieved with the `session_data` helper function. This returns
+an (initially empty) dictionary.
 
 ```python
 from datetime import datetime
