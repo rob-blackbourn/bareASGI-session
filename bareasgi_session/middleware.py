@@ -13,43 +13,43 @@ SESSION_COOKIE_NAME = b'bareASGI-session'
 SESSION_COOKIE_KEY = '__bareasgi_session__'
 
 
-def add_session_middleware(
-        app: Application,
-        storage: SessionStorage,
-        cookie_factory: SessionCookieFactory
-) -> None:
-    """Add the session middleware
+class SessionMiddleware:
+    """Session middleware"""
 
-    Args:
-        app (Application): The ASGI application
-        storage (SessionStorage): The session storage engine
-        cookie_factory (SessionCookieFactory): The session cookie factory
-    """
+    def __init__(
+            self,
+            storage: SessionStorage,
+            cookie_factory: SessionCookieFactory
+    ) -> None:
+        self.storage = storage
+        self.cookie_factory = cookie_factory
 
-    async def _session_middleware(
-            request: HttpRequest,
-            handler: HttpRequestCallback
-    ) -> HttpResponse:
-        # Fetch or create the session cookie and add it to info
+    async def _hydrate_session(self, request: HttpRequest) -> str:
         cookies = header.cookie(request.scope['headers'])
-        cookie = cookies.get(cookie_factory.name)
+        cookie = cookies.get(self.cookie_factory.name)
         session_key: str = cookie[0].decode('ascii') if cookie else str(uuid())
-        request.info[SESSION_COOKIE_KEY] = await storage.load(session_key)
+        request.info[SESSION_COOKIE_KEY] = await self.storage.load(session_key)
+        return session_key
 
-        # Call the request handler.
-        response = await handler(request)
-
+    async def _dehydrate_session(
+            self,
+            session_key: str,
+            request: HttpRequest,
+            response: HttpResponse
+    ) -> HttpResponse:
         # Save the cookie data
-        await storage.save(session_key, request.info[SESSION_COOKIE_KEY])
+        await self.storage.save(session_key, request.info[SESSION_COOKIE_KEY])
 
         # Put the set-cookie in the headers
         headers = response.headers or []
-        set_cookie = cookie_factory.create_cookie(session_key)
+        host = header.find(b'host', request.scope['headers'])
+        assert host, 'missing host header'
+        set_cookie = self.cookie_factory.create_cookie(session_key, host)
         set_cookie_header = (b'set-cookie', set_cookie)
         for index, (key, value) in enumerate(headers):
             if key == b'set-cookie':
                 candidate = decode_set_cookie(value)
-                if candidate['name'] == cookie_factory.name:
+                if candidate['name'] == self.cookie_factory.name:
                     headers[index] = set_cookie_header
                     break
         else:
@@ -62,4 +62,34 @@ def add_session_middleware(
             response.pushes
         )
 
-    app.middlewares.append(_session_middleware)
+    async def __call__(
+            self,
+            request: HttpRequest,
+            handler: HttpRequestCallback
+    ) -> HttpResponse:
+        session_key = await self._hydrate_session(request)
+        response = await handler(request)
+        return await self._dehydrate_session(session_key, request, response)
+
+
+def add_session_middleware(
+        app: Application,
+        storage: SessionStorage,
+        cookie_factory: SessionCookieFactory
+) -> Application:
+    """Add the session middleware
+
+    Args:
+        app (Application): The ASGI application
+        storage (SessionStorage): The session storage engine
+        cookie_factory (SessionCookieFactory): The session cookie factory
+
+    Returns:
+        Application: The application.
+    """
+
+    session_middleware = SessionMiddleware(storage, cookie_factory)
+
+    app.middlewares.append(session_middleware)
+
+    return app
