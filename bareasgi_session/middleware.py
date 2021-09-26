@@ -16,7 +16,7 @@ class SessionMiddleware:
 
     def __init__(
             self,
-            info_key: str,
+            context_key: str,
             storage: SessionStorage,
             cookie_name: bytes,
             expires: Optional[datetime],
@@ -27,7 +27,7 @@ class SessionMiddleware:
             http_only: bool,
             same_site: Optional[bytes]
     ) -> None:
-        self.info_key = info_key
+        self.context_key = context_key
         self.storage = storage
         self.cookie_name = cookie_name
         self.expires = expires
@@ -42,7 +42,7 @@ class SessionMiddleware:
         cookies = header.cookie(request.scope['headers'])
         cookie = cookies.get(self.cookie_name)
         session_key: str = cookie[0].decode('ascii') if cookie else str(uuid())
-        request.info[self.info_key] = await self.storage.load(session_key)
+        request.context[self.context_key] = await self.storage.load(session_key)
         return session_key
 
     async def _dehydrate_session(
@@ -52,7 +52,7 @@ class SessionMiddleware:
             response: HttpResponse
     ) -> HttpResponse:
         # Save the cookie data
-        await self.storage.save(session_key, request.info[self.info_key])
+        await self.storage.save(session_key, request.context[self.context_key])
 
         # Put the set-cookie in the headers
         headers = response.headers or []

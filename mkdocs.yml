@@ -13,6 +13,7 @@ theme:
 nav:
   - index.md
   - User Guide:
+      - user-guide/overview.md
       - user-guide/installation.md
       - user-guide/getting-started.md
   - API:

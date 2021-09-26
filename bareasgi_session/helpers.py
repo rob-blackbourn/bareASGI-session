@@ -6,16 +6,16 @@ from typing import Any, Optional, Union
 from bareasgi import Application, HttpRequest
 
 from .middleware import SessionMiddleware
-from .storage import SessionStorage
+from .storage import SessionStorage, MemorySessionStorage
 
-SESSION_INFO_KEY = '__bareasgi_session__'
+SESSION_COONTEXT_KEY = '__bareasgi_session__'
 
 
 def add_session_middleware(
         app: Application,
-        storage: SessionStorage,
+        storage: Optional[SessionStorage] = None,
         *,
-        info_key: str = SESSION_INFO_KEY,
+        context_key: str = SESSION_COONTEXT_KEY,
         cookie_name: bytes = b'bareASGI-session',
         expires: Optional[datetime] = None,
         max_age: Optional[Union[int, timedelta]] = None,
@@ -25,10 +25,39 @@ def add_session_middleware(
         http_only: bool = False,
         same_site: Optional[bytes] = None
 ) -> Application:
+    """Add session storage middleware.
+
+    If no storage provider is supplied the default is to store the sessions in
+    memory.
+
+    Args:
+        app (Application): The ASGI application.
+        storage (Optional[SessionStorage], optional): The storage provider.
+            Defaults to None.
+        context_key (str, optional): The key in the applications info where session
+            data can be found. Defaults to SESSION_COONTEXT_KEY.
+        cookie_name (bytes, optional): The cookie name. Defaults to b'bareASGI-session'.
+        expires (Optional[datetime], optional): The cookie expiry time. Defaults
+            to None.
+        max_age (Optional[Union[int, timedelta]], optional): The maximum age of
+            the cookie. Defaults to None.
+        path (Optional[bytes], optional): The cookie path. Defaults to None.
+        domain (Optional[bytes], optional): The cookie domain. If unspecified
+            the host header of the request will be used. Defaults to None.
+        secure (bool, optional): The cookie is only sent if the request is
+            using https Defaults to False.
+        http_only (bool, optional): If true the cookie is not available with
+            javascript in the client. Defaults to False.
+        same_site (Optional[bytes], optional): Controls whether the cookie is
+            sent cross origin. Defaults to None.
+
+    Returns:
+        Application: The ASGI application.
+    """
 
     session_middleware = SessionMiddleware(
-        info_key,
-        storage,
+        context_key,
+        storage or MemorySessionStorage(),
         cookie_name,
         expires,
         max_age,
@@ -39,8 +68,6 @@ def add_session_middleware(
         same_site
     )
 
-    app.info[info_key] = None
-
     app.middlewares.append(session_middleware)
 
     return app
@@ -49,6 +76,6 @@ def add_session_middleware(
 def session_data(
         request: HttpRequest,
         *,
-        info_key: str = SESSION_INFO_KEY
+        context_key: str = SESSION_COONTEXT_KEY
 ) -> Any:
-    return request.info[info_key]
+    return request.context[context_key]
