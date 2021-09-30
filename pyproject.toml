@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bareASGI-session"
-version = "4.0.0-alpha.1"
+version = "4.0.0-alpha.2"
 description = "Session support for bareASGI"
 repository = "https://github.com/rob-blackbourn/bareASGI-session"
 authors = ["Rob Blackbourn <rob.blackbourn@gmail.com>"]
@@ -12,8 +12,8 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
-bareasgi = "^4.0.0-alpha.2"
+python = "^3.8"
+bareasgi = "^4.0.0-alpha.5"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5"

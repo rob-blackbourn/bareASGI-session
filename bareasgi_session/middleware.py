@@ -54,22 +54,30 @@ class SessionMiddleware:
         # Save the cookie data
         await self.storage.save(session_key, request.context[self.context_key])
 
-        # Put the set-cookie in the headers
-        headers = response.headers or []
-        host = header.find(b'host', request.scope['headers'])
-        assert host, 'missing host header'
+        if self.domain:
+            domain: Optional[bytes] = self.domain
+        else:
+            domain = header.find(b'host', request.scope['headers'])
+            assert domain, 'missing host header'
+            if domain == b'localhost' or domain.startswith(b'localhost:'):
+                # For localhost the domain must be omitted.
+                domain = None
+
         set_cookie = encode_set_cookie(
             self.cookie_name,
             session_key.encode('ascii'),
             expires=self.expires,
             max_age=self.max_age,
             path=self.path,
-            domain=self.domain or host,
+            domain=domain,
             secure=self.secure,
             http_only=self.http_only,
             same_site=self.same_site
         )
         set_cookie_header = (b'set-cookie', set_cookie)
+
+        # Put the set-cookie in the headers
+        headers = response.headers or []
         for index, (key, value) in enumerate(headers):
             if key == b'set-cookie':
                 candidate = decode_set_cookie(value)
