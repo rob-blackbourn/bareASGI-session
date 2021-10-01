@@ -30,11 +30,20 @@ def add_session_middleware(
     If no storage provider is supplied the default is to store the sessions in
     memory.
 
+    The default settings are **not secure**. In production the following settings
+    are recommended.
+
+    Setting `http_only=True` forbids JavaScript from accessing the cookie in
+    the browser. With `same_site="Strict"` or `same_site="Lax"`, the browser
+    prevents the cookie being sent on cross-site requests. If the server is
+    delivering over https, setting `secure=True` will prevent the cookie from
+    being sent from non-https requests.
+
     Args:
         app (Application): The ASGI application.
         storage (Optional[SessionStorage], optional): The storage provider.
             Defaults to None.
-        context_key (str, optional): The key in the applications info where session
+        context_key (str, optional): The key in the applications context where session
             data can be found. Defaults to SESSION_CONTEXT_KEY.
         cookie_name (bytes, optional): The cookie name. Defaults to b'bareASGI-session'.
         expires (Optional[datetime], optional): The cookie expiry time. Defaults

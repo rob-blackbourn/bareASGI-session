@@ -43,6 +43,25 @@ class SessionMiddleware:
             request: HttpRequest,
             handler: HttpRequestCallback
     ) -> HttpResponse:
+        """Call the session middleware.
+
+        Sessions are maintained with cookies. The session gets set up by
+        sending a set-cookie header in the response, with a cookie containing a
+        unique key. The browser keeps this cookie and sends it on all subsequent
+        requests, so the set-cookie header need only be sent once per session.
+
+        The key is used to load session data from a store which is then added to
+        the request before the handler is called. Any changes to the session
+        data are saved after the handler returns and before the response is sent.
+
+        Args:
+            request (HttpRequest): The request.
+            handler (HttpRequestCallback): The request handler.
+
+        Returns:
+            HttpResponse: The response.
+        """
+
         cookie_session_key = self._get_session_key_from_cookie(request)
         if cookie_session_key is not None:
             session_key = cookie_session_key
