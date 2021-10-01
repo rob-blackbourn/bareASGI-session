@@ -8,14 +8,14 @@ from bareasgi import Application, HttpRequest
 from .middleware import SessionMiddleware
 from .storage import SessionStorage, MemorySessionStorage
 
-SESSION_COONTEXT_KEY = '__bareasgi_session__'
+SESSION_CONTEXT_KEY = '__bareasgi_session__'
 
 
 def add_session_middleware(
         app: Application,
         storage: Optional[SessionStorage] = None,
         *,
-        context_key: str = SESSION_COONTEXT_KEY,
+        context_key: str = SESSION_CONTEXT_KEY,
         cookie_name: bytes = b'bareASGI-session',
         expires: Optional[datetime] = None,
         max_age: Optional[Union[int, timedelta]] = None,
@@ -35,7 +35,7 @@ def add_session_middleware(
         storage (Optional[SessionStorage], optional): The storage provider.
             Defaults to None.
         context_key (str, optional): The key in the applications info where session
-            data can be found. Defaults to SESSION_COONTEXT_KEY.
+            data can be found. Defaults to SESSION_CONTEXT_KEY.
         cookie_name (bytes, optional): The cookie name. Defaults to b'bareASGI-session'.
         expires (Optional[datetime], optional): The cookie expiry time. Defaults
             to None.
@@ -76,6 +76,6 @@ def add_session_middleware(
 def session_data(
         request: HttpRequest,
         *,
-        context_key: str = SESSION_COONTEXT_KEY
+        context_key: str = SESSION_CONTEXT_KEY
 ) -> Any:
     return request.context[context_key]
