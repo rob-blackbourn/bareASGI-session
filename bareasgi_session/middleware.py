@@ -1,8 +1,8 @@
 """Session"""
 
 from datetime import datetime, timedelta
+import secrets
 from typing import List, Optional, Tuple, Union
-from uuid import uuid4 as uuid
 
 from bareasgi import HttpRequest, HttpResponse, HttpRequestCallback
 from bareutils.cookies import decode_set_cookie, encode_set_cookie
@@ -85,14 +85,14 @@ class SessionMiddleware:
 
     def _get_session_key_from_cookie(self, request: HttpRequest) -> Optional[str]:
         cookies = header.cookie(request.scope['headers'])
-        cookie = cookies.get(self.cookie_name)
-        if not cookie:
+        session_cookie = cookies.get(self.cookie_name)
+        if not session_cookie:
             return None
 
-        return cookie[0].decode('ascii')
+        return session_cookie[0].decode('ascii')
 
     def _make_new_session_key(self) -> str:
-        return str(uuid())
+        return secrets.token_hex(32)
 
     async def _load_session_from_store(self, request: HttpRequest, session_key: str) -> None:
         request.context[self.context_key] = await self.storage.load(session_key)
