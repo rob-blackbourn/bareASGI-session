@@ -1,7 +1,7 @@
 """Session"""
 
 from datetime import datetime, timedelta
-from typing import Optional, Union
+from typing import List, Optional, Tuple, Union
 from uuid import uuid4 as uuid
 
 from bareasgi import HttpRequest, HttpResponse, HttpRequestCallback
@@ -38,30 +38,78 @@ class SessionMiddleware:
         self.http_only = http_only
         self.same_site = same_site
 
-    async def _hydrate_session(self, request: HttpRequest) -> str:
+    async def __call__(
+            self,
+            request: HttpRequest,
+            handler: HttpRequestCallback
+    ) -> HttpResponse:
+        cookie_session_key = self._get_session_key_from_cookie(request)
+        if cookie_session_key is not None:
+            session_key = cookie_session_key
+        else:
+            session_key = self._make_new_session_key()
+
+        await self._load_session_from_store(request, session_key)
+
+        response = await handler(request)
+
+        await self._save_session_to_store(request, session_key)
+
+        if cookie_session_key is None:
+            response = self._add_session_key_cookie_to_response(
+                session_key,
+                request,
+                response
+            )
+
+        return response
+
+    def _get_session_key_from_cookie(self, request: HttpRequest) -> Optional[str]:
         cookies = header.cookie(request.scope['headers'])
         cookie = cookies.get(self.cookie_name)
-        session_key: str = cookie[0].decode('ascii') if cookie else str(uuid())
-        request.context[self.context_key] = await self.storage.load(session_key)
-        return session_key
+        if not cookie:
+            return None
 
-    async def _dehydrate_session(
+        return cookie[0].decode('ascii')
+
+    def _make_new_session_key(self) -> str:
+        return str(uuid())
+
+    async def _load_session_from_store(self, request: HttpRequest, session_key: str) -> None:
+        request.context[self.context_key] = await self.storage.load(session_key)
+
+    async def _save_session_to_store(self, request: HttpRequest, session_key: str) -> None:
+        await self.storage.save(session_key, request.context[self.context_key])
+
+    def _add_session_key_cookie_to_response(
             self,
             session_key: str,
             request: HttpRequest,
             response: HttpResponse
     ) -> HttpResponse:
-        # Save the cookie data
-        await self.storage.save(session_key, request.context[self.context_key])
+        set_cookie_header = self._make_set_cookie_header(request, session_key)
 
+        headers = self._add_set_cookie_header(
+            response.headers or [],
+            set_cookie_header
+        )
+
+        return HttpResponse(
+            response.status,
+            headers,
+            response.body,
+            response.pushes
+        )
+
+    def _make_set_cookie_header(
+            self,
+            request: HttpRequest,
+            session_key: str
+    ) -> Tuple[bytes, bytes]:
         if self.domain:
             domain: Optional[bytes] = self.domain
         else:
-            domain = header.find(b'host', request.scope['headers'])
-            assert domain, 'missing host header'
-            if domain == b'localhost' or domain.startswith(b'localhost:'):
-                # For localhost the domain must be omitted.
-                domain = None
+            domain = self._get_domain(request)
 
         set_cookie = encode_set_cookie(
             self.cookie_name,
@@ -74,10 +122,22 @@ class SessionMiddleware:
             http_only=self.http_only,
             same_site=self.same_site
         )
-        set_cookie_header = (b'set-cookie', set_cookie)
+        return (b'set-cookie', set_cookie)
 
-        # Put the set-cookie in the headers
-        headers = response.headers or []
+    def _get_domain(self, request: HttpRequest) -> Optional[bytes]:
+        domain = header.find(b'host', request.scope['headers'])
+        assert domain, 'missing host header'
+        if domain == b'localhost' or domain.startswith(b'localhost:'):
+            # For localhost the domain must be omitted.
+            domain = None
+
+        return domain
+
+    def _add_set_cookie_header(
+            self,
+            headers: List[Tuple[bytes, bytes]],
+            set_cookie_header: Tuple[bytes, bytes]
+    ) -> List[Tuple[bytes, bytes]]:
         for index, (key, value) in enumerate(headers):
             if key == b'set-cookie':
                 candidate = decode_set_cookie(value)
@@ -87,18 +147,4 @@ class SessionMiddleware:
         else:
             headers.append(set_cookie_header)
 
-        return HttpResponse(
-            response.status,
-            headers,
-            response.body,
-            response.pushes
-        )
-
-    async def __call__(
-            self,
-            request: HttpRequest,
-            handler: HttpRequestCallback
-    ) -> HttpResponse:
-        session_key = await self._hydrate_session(request)
-        response = await handler(request)
-        return await self._dehydrate_session(session_key, request, response)
+        return headers
