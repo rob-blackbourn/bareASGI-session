@@ -1,76 +1,168 @@
 """Session"""
 
-from uuid import uuid4 as uuid
+from datetime import datetime, timedelta
+import secrets
+from typing import List, Optional, Tuple, Union
 
-from bareasgi import Application
-from baretypes import (
-    Scope,
-    Info,
-    RouteMatches,
-    Content,
-    HttpRequestCallback,
-    HttpResponse
-)
-from bareutils.cookies import decode_set_cookie
-import bareutils.header as header
+from bareasgi import HttpRequest, HttpResponse, HttpRequestCallback
+from bareutils.cookies import decode_set_cookie, encode_set_cookie
+from bareutils import header
 
-from .factory import SessionCookieFactory
 from .storage import SessionStorage
 
-SESSION_COOKIE_NAME = b'bareASGI-session'
-SESSION_COOKIE_KEY = '__bareasgi_session__'
 
+class SessionMiddleware:
+    """Session middleware"""
 
-def add_session_middleware(
-        app: Application,
-        storage: SessionStorage,
-        cookie_factory: SessionCookieFactory
-) -> None:
-    """Add the session middleware
+    def __init__(
+            self,
+            context_key: str,
+            storage: SessionStorage,
+            cookie_name: bytes,
+            expires: Optional[datetime],
+            max_age: Optional[Union[int, timedelta]],
+            path: Optional[bytes],
+            domain: Optional[bytes],
+            secure: bool,
+            http_only: bool,
+            same_site: Optional[bytes]
+    ) -> None:
+        self.context_key = context_key
+        self.storage = storage
+        self.cookie_name = cookie_name
+        self.expires = expires
+        self.max_age = max_age
+        self.path = path
+        self.domain = domain
+        self.secure = secure
+        self.http_only = http_only
+        self.same_site = same_site
 
-    Args:
-        app (Application): The ASGI application
-        storage (SessionStorage): The session storage engine
-        cookie_factory (SessionCookieFactory): The session cookie factory
-    """
-
-    async def _session_middleware(
-            scope: Scope,
-            info: Info,
-            matches: RouteMatches,
-            content: Content,
+    async def __call__(
+            self,
+            request: HttpRequest,
             handler: HttpRequestCallback
     ) -> HttpResponse:
-        # Fetch or create the session cookie and add it to info
-        cookies = header.cookie(scope['headers'])
-        cookie = cookies.get(cookie_factory.name)
-        session_key: str = cookie[0].decode('ascii') if cookie else str(uuid())
-        info[SESSION_COOKIE_KEY] = await storage.load(session_key)
+        """Call the session middleware.
 
-        # Call the request handler.
-        status_code, headers, content, push_responses = await handler(
-            scope,
-            info,
-            matches,
-            content
+        Sessions are maintained with cookies. The session gets set up by
+        sending a set-cookie header in the response, with a cookie containing a
+        unique key. The browser keeps this cookie and sends it on all subsequent
+        requests, so the set-cookie header need only be sent once per session.
+
+        The key is used to load session data from a store which is then added to
+        the request before the handler is called. Any changes to the session
+        data are saved after the handler returns and before the response is sent.
+
+        Args:
+            request (HttpRequest): The request.
+            handler (HttpRequestCallback): The request handler.
+
+        Returns:
+            HttpResponse: The response.
+        """
+
+        cookie_session_key = self._get_session_key_from_cookie(request)
+        if cookie_session_key is not None:
+            session_key = cookie_session_key
+        else:
+            session_key = self._make_new_session_key()
+
+        await self._load_session_from_store(request, session_key)
+
+        response = await handler(request)
+
+        await self._save_session_to_store(request, session_key)
+
+        if cookie_session_key is None:
+            response = self._add_session_key_cookie_to_response(
+                session_key,
+                request,
+                response
+            )
+
+        return response
+
+    def _get_session_key_from_cookie(self, request: HttpRequest) -> Optional[str]:
+        cookies = header.cookie(request.scope['headers'])
+        session_cookie = cookies.get(self.cookie_name)
+        if not session_cookie:
+            return None
+
+        return session_cookie[0].decode('ascii')
+
+    def _make_new_session_key(self) -> str:
+        return secrets.token_hex(32)
+
+    async def _load_session_from_store(self, request: HttpRequest, session_key: str) -> None:
+        request.context[self.context_key] = await self.storage.load(session_key)
+
+    async def _save_session_to_store(self, request: HttpRequest, session_key: str) -> None:
+        await self.storage.save(session_key, request.context[self.context_key])
+
+    def _add_session_key_cookie_to_response(
+            self,
+            session_key: str,
+            request: HttpRequest,
+            response: HttpResponse
+    ) -> HttpResponse:
+        set_cookie_header = self._make_set_cookie_header(request, session_key)
+
+        headers = self._add_set_cookie_header(
+            response.headers or [],
+            set_cookie_header
         )
 
-        # Save the cookie data
-        await storage.save(session_key, info[SESSION_COOKIE_KEY])
+        return HttpResponse(
+            response.status,
+            headers,
+            response.body,
+            response.pushes
+        )
 
-        # Put the set-cookie in the headers
-        set_cookie = cookie_factory.create_cookie(session_key)
-        set_cookie_header = (b'set-cookie', set_cookie)
+    def _make_set_cookie_header(
+            self,
+            request: HttpRequest,
+            session_key: str
+    ) -> Tuple[bytes, bytes]:
+        if self.domain:
+            domain: Optional[bytes] = self.domain
+        else:
+            domain = self._get_domain(request)
+
+        set_cookie = encode_set_cookie(
+            self.cookie_name,
+            session_key.encode('ascii'),
+            expires=self.expires,
+            max_age=self.max_age,
+            path=self.path,
+            domain=domain,
+            secure=self.secure,
+            http_only=self.http_only,
+            same_site=self.same_site
+        )
+        return (b'set-cookie', set_cookie)
+
+    def _get_domain(self, request: HttpRequest) -> Optional[bytes]:
+        domain = header.find_exact(header.HOST, request.scope['headers'])
+        if domain == b'localhost' or domain.startswith(b'localhost:'):
+            # For localhost the domain must be omitted.
+            return None
+
+        return domain
+
+    def _add_set_cookie_header(
+            self,
+            headers: List[Tuple[bytes, bytes]],
+            set_cookie_header: Tuple[bytes, bytes]
+    ) -> List[Tuple[bytes, bytes]]:
         for index, (key, value) in enumerate(headers):
-            if key == b'set-cookie':
+            if key == header.SET_COOKIE:
                 candidate = decode_set_cookie(value)
-                if candidate['name'] == cookie_factory.name:
+                if candidate['name'] == self.cookie_name:
                     headers[index] = set_cookie_header
                     break
         else:
             headers.append(set_cookie_header)
 
-        # Return the response.
-        return status_code, headers, content, push_responses
-
-    app.middlewares.append(_session_middleware)
+        return headers
