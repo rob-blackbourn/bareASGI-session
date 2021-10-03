@@ -144,11 +144,10 @@ class SessionMiddleware:
         return (b'set-cookie', set_cookie)
 
     def _get_domain(self, request: HttpRequest) -> Optional[bytes]:
-        domain = header.find(b'host', request.scope['headers'])
-        assert domain, 'missing host header'
+        domain = header.find_exact(header.HOST, request.scope['headers'])
         if domain == b'localhost' or domain.startswith(b'localhost:'):
             # For localhost the domain must be omitted.
-            domain = None
+            return None
 
         return domain
 
@@ -158,7 +157,7 @@ class SessionMiddleware:
             set_cookie_header: Tuple[bytes, bytes]
     ) -> List[Tuple[bytes, bytes]]:
         for index, (key, value) in enumerate(headers):
-            if key == b'set-cookie':
+            if key == header.SET_COOKIE:
                 candidate = decode_set_cookie(value)
                 if candidate['name'] == self.cookie_name:
                     headers[index] = set_cookie_header
