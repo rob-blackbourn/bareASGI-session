@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bareASGI-session"
-version = "4.0.0"
+version = "4.0.1"
 description = "Session support for bareASGI"
 repository = "https://github.com/rob-blackbourn/bareASGI-session"
 authors = ["Rob Blackbourn <rob.blackbourn@gmail.com>"]
